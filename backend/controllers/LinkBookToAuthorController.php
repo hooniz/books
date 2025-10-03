@@ -4,9 +4,11 @@ namespace backend\controllers;
 
 use backend\models\LinkBookToAuthor;
 use backend\models\LinkBookToAuthorSearch;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * LinkBookToAuthorController implements the CRUD actions for LinkBookToAuthor model.
@@ -16,13 +18,13 @@ class LinkBookToAuthorController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return array_merge(
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -36,7 +38,7 @@ class LinkBookToAuthorController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new LinkBookToAuthorSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -53,7 +55,7 @@ class LinkBookToAuthorController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($book_id)
+    public function actionView(int $book_id): string
     {
         return $this->render('view', [
             'model' => $this->findModel($book_id),
@@ -63,9 +65,10 @@ class LinkBookToAuthorController extends Controller
     /**
      * Creates a new LinkBookToAuthor model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
+     * @throws Exception
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new LinkBookToAuthor();
 
@@ -86,10 +89,10 @@ class LinkBookToAuthorController extends Controller
      * Updates an existing LinkBookToAuthor model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $book_id Book ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return string|Response
+     * @throws NotFoundHttpException|Exception if the model cannot be found
      */
-    public function actionUpdate($book_id)
+    public function actionUpdate(int $book_id): Response|string
     {
         $model = $this->findModel($book_id);
 
@@ -106,10 +109,10 @@ class LinkBookToAuthorController extends Controller
      * Deletes an existing LinkBookToAuthor model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $book_id Book ID
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($book_id)
+    public function actionDelete(int $book_id): Response
     {
         $this->findModel($book_id)->delete();
 
@@ -123,9 +126,9 @@ class LinkBookToAuthorController extends Controller
      * @return LinkBookToAuthor the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($book_id)
+    protected function findModel(int $book_id): LinkBookToAuthor
     {
-        if (($model = LinkBookToAuthor::findOne(['book_id' => $book_id])) !== null) {
+        if (! is_null($model = LinkBookToAuthor::findOne(['book_id' => $book_id]))) {
             return $model;
         }
 

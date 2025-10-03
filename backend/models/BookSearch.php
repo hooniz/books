@@ -39,7 +39,7 @@ class BookSearch extends Book
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $formName = null)
+    public function search(array $params, ?string $formName = null): ActiveDataProvider
     {
         $query = Book::find();
 

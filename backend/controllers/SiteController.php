@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\SignupForm;
 use Yii;
+use yii\db\Exception;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -74,7 +75,7 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-    public function actionLogin()
+    public function actionLogin(): Response|string
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -108,12 +109,17 @@ class SiteController extends Controller
      * Signs user up.
      *
      * @return string|Response
+     * @throws Exception
      */
     public function actionSignup(): Response|string
     {
         $model = new SignupForm();
+
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+            Yii::$app->session->setFlash(
+                'success',
+                'Thank you for registration. Please check your inbox for verification email.'
+            );
             return $this->goHome();
         }
 

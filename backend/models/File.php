@@ -5,6 +5,7 @@ namespace backend\models;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "file".
@@ -19,14 +20,12 @@ use yii\behaviors\TimestampBehavior;
  * @property int $updated_by
  * @property int $updated_at
  */
-class File extends \yii\db\ActiveRecord
+class File extends ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'file';
     }
@@ -34,7 +33,7 @@ class File extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['type', 'size'], 'default', 'value' => null],
@@ -48,7 +47,7 @@ class File extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',

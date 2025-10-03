@@ -20,13 +20,13 @@ class BookController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return array_merge(
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -40,7 +40,7 @@ class BookController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new BookSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -57,7 +57,7 @@ class BookController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -70,11 +70,13 @@ class BookController extends Controller
      * @return string|Response
      * @throws Exception
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new Book();
+
         if ($model->load(Yii::$app->request->post())) {
             $model->coverFile = UploadedFile::getInstance($model, 'coverFile');
+
             if ($model->uploadFile() && $model->save(false)) {
                 return $this->redirect(['index']);
             }
@@ -91,7 +93,7 @@ class BookController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
      */
-    public function actionUpdate($id): Response|string
+    public function actionUpdate(int $id): Response|string
     {
         $model = $this->findModel($id);
 
@@ -114,7 +116,7 @@ class BookController extends Controller
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
 
@@ -128,9 +130,9 @@ class BookController extends Controller
      * @return Book the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id): Book
     {
-        if (($model = Book::findOne(['id' => $id])) !== null) {
+        if (! is_null($model = Book::findOne(['id' => $id]))) {
             return $model;
         }
 

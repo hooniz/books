@@ -5,6 +5,7 @@ namespace backend\models;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "link_book_to_author".
@@ -16,14 +17,12 @@ use yii\behaviors\TimestampBehavior;
  * @property int $updated_by
  * @property int $updated_at
  */
-class LinkBookToAuthor extends \yii\db\ActiveRecord
+class LinkBookToAuthor extends ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'link_book_to_author';
     }
@@ -31,7 +30,7 @@ class LinkBookToAuthor extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['author_id'], 'required'],

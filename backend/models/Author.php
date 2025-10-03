@@ -2,9 +2,11 @@
 
 namespace backend\models;
 
-use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "author".
@@ -17,11 +19,11 @@ use yii\behaviors\TimestampBehavior;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
+ * @property-read ?Book $books
+ * @property-read ?string $fullName
  */
-class Author extends \yii\db\ActiveRecord
+class Author extends ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */
@@ -75,14 +77,27 @@ class Author extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getBooks()
+    /**
+     * Gets query for [[Books]].
+     *
+     * @throws InvalidConfigException
+     */
+    public function getBooks(): ActiveQuery|null|Book
     {
         return $this->hasMany(Book::class, ['id' => 'book_id'])
             ->viaTable('link_book_to_author', ['author_id' => 'id']);
     }
 
+    /**
+     * Returns the author's full name in the format "Last Name First Name Middle Name".
+     *
+     * @return string
+     */
     public function getFullName(): string
     {
-        return $this->last_name . ' ' . $this->first_name . ($this->middle_name ? ' ' . $this->middle_name : '');
+        return sprintf("%s %s%s",
+            $this->last_name,
+            $this->first_name, $this->middle_name ? ' ' . $this->middle_name : ''
+        );
     }
 }

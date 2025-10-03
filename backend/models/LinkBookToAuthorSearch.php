@@ -25,7 +25,7 @@ class LinkBookToAuthorSearch extends LinkBookToAuthor
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -39,7 +39,7 @@ class LinkBookToAuthorSearch extends LinkBookToAuthor
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $formName = null)
+    public function search(array $params, ?string $formName = null): ActiveDataProvider
     {
         $query = LinkBookToAuthor::find();
 
