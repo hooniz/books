@@ -21,6 +21,8 @@ use yii\db\ActiveRecord;
  * @property int $updated_at
  * @property-read ?Book $books
  * @property-read ?string $fullName
+ * @property-read int|null $subscribersCount
+ * @property-read ActiveQuery $subscriptions
  */
 class Author extends ActiveRecord
 {
@@ -99,5 +101,25 @@ class Author extends ActiveRecord
             $this->last_name,
             $this->first_name, $this->middle_name ? ' ' . $this->middle_name : ''
         );
+    }
+
+    /**
+     * Gets query for [[Subscriptions]].
+     *
+     * @return ActiveQuery
+     */
+    public function getSubscriptions(): ActiveQuery
+    {
+        return $this->hasMany(Subscription::class, ['author_id' => 'id']);
+    }
+
+    /**
+     * Returns the count of subscribers for the author.
+     *
+     * @return bool|int|string|null
+     */
+    public function getSubscribersCount(): bool|int|string|null
+    {
+        return $this->getSubscriptions()->count();
     }
 }

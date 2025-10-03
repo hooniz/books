@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'last_name',
             'middle_name',
             [
-                'label' => 'Книги',
+                'label' => 'Books',
                 'format' => 'html',
                 'value' => static function($model) {
                     $books = $model->books;
@@ -46,11 +46,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
+                'label' => 'Subscribers',
+                'value' => static function($model) {
+                    return $model->subscribersCount;
+                }
+            ],
+            [
                 'class' => ActionColumn::className(),
                 'urlCreator' => static function ($action, Author $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],
+
         ],
     ]); ?>
 

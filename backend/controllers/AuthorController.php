@@ -4,7 +4,10 @@ namespace backend\controllers;
 
 use backend\models\Author;
 use backend\models\AuthorSearch;
+use backend\models\Subscription;
+use Yii;
 use yii\db\Exception;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -24,12 +27,28 @@ class AuthorController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
                 ],
-            ]
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['create', 'update', 'delete', 'index', 'view', 'subscribe'],
+                    'rules' => [
+                        [
+                            'actions' => ['index', 'view', 'subscribe'],
+                            'allow' => true,
+                            'roles' => ['?', '@'],
+                        ],
+                        [
+                            'actions' => ['create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
+            ],
         );
     }
 
@@ -138,5 +157,36 @@ class AuthorController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Subscribe the current user to the author with the given ID.
+     *
+     * @throws Exception
+     */
+    public function actionSubscribe($id): Response
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $sub = Subscription::findOne([
+            'user_id' => Yii::$app->user->id,
+            'author_id' => $id
+        ]);
+
+        if (!$sub) {
+            $sub = new Subscription();
+            $sub->user_id = Yii::$app->user->id;
+            $sub->author_id = $id;
+            $sub->created_at = time();
+            $sub->save();
+
+            Yii::$app->session->setFlash('success', 'Вы подписались на автора!');
+        } else {
+            Yii::$app->session->setFlash('info', 'Вы уже подписаны на этого автора.');
+        }
+
+        return $this->redirect(['author/view', 'id' => $id]);
     }
 }

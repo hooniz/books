@@ -95,7 +95,7 @@ class Book extends ActiveRecord
     /**
      * @throws InvalidConfigException
      */
-    public function getAuthors()
+    public function getAuthors(): ActiveQuery
     {
         return $this->hasMany(Author::class, ['id' => 'author_id'])
             ->viaTable('link_book_to_author', ['book_id' => 'id']);

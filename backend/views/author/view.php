@@ -24,19 +24,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?php if (!Yii::$app->user->isGuest): ?>
+            <?= Html::a('Subscribe', ['subscribe', 'id' => $model->id], [
+                'class' => 'btn btn-primary'
+            ]) ?>
+        <?php endif; ?>
     </p>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
-            'first_name',
-            'last_name',
-            'middle_name',
-            'created_by',
-            'created_at',
-            'updated_by',
-            'updated_at',
+            ['label' => 'Full Name', 'value' => $model->getFullName()],
+            'created_at:datetime',
+            ['label' => 'Subscribers', 'value' => $model->subscribersCount],
         ],
     ]) ?>
 
