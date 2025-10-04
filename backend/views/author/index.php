@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Subscription;
 use yii\grid\SerialColumn;
 use backend\models\Author;
 use yii\helpers\Html;
@@ -36,28 +37,50 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Books',
                 'format' => 'html',
-                'value' => static function($model) {
+                'value' => static function ($model) {
                     $books = $model->books;
                     if (empty($books)) {
                         return null;
                     }
 
-                    return implode('<br>', array_map(static function($b){ return Html::encode($b->title); }, $books));
+                    return implode(
+                        '<br>',
+                        array_map(
+                            static function ($b) {
+                                return Html::encode($b->title);
+                            },
+                            $books
+                        )
+                    );
                 }
             ],
             [
                 'label' => 'Subscribers',
-                'value' => static function($model) {
+                'value' => static function ($model) {
                     return $model->subscribersCount;
                 }
             ],
             [
-                'class' => ActionColumn::className(),
+                'class' => ActionColumn::class,
                 'urlCreator' => static function ($action, Author $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                },
+                'visibleButtons' => [
+                    'view' => true,
+                    'subscribe' => static function ($model, $key, $index) {
+                        return !Yii::$app->user->isGuest && !Subscription::getSubscriptionByAuthor($model->id);
+                    },
+                    'unsubscribe' => static function ($model, $key, $index) {
+                        return !Yii::$app->user->isGuest && Subscription::getSubscriptionByAuthor($model->id);
+                    },
+                    'update' => static function ($model, $key, $index) {
+                        return !Yii::$app->user->isGuest;
+                    },
+                    'delete' => static function ($model, $key, $index) {
+                        return !Yii::$app->user->isGuest;
+                    },
+                ],
             ],
-
         ],
     ]); ?>
 

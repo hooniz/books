@@ -1,5 +1,6 @@
 <?php
 
+use yii\grid\SerialColumn;
 use backend\models\Book;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -21,17 +22,16 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Book', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            ['class' => SerialColumn::class],
             [
                 'attribute' => 'file_id',
+                'label' => 'Cover',
                 'format' => 'html',
-                'value' => function($model) {
+                'value' => static function ($model) {
                     return $model->coverUrl ? Html::img($model->coverUrl, ['width' => '80']) : null;
                 }
             ],
@@ -39,17 +39,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'year',
             'description:ntext',
             'isbn',
-            //'file_id',
-            //'created_by',
-            //'created_at',
-            //'updated_by',
-            //'updated_at',
-
             [
-                'class' => ActionColumn::className(),
+                'class' => ActionColumn::class,
                 'urlCreator' => function ($action, Book $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                },
+                'visibleButtons' => [
+                    'view' => true,
+                    'update' => static function ($model, $key, $index) {
+                        return !Yii::$app->user->isGuest;
+                    },
+                    'delete' => static function ($model, $key, $index) {
+                        return !Yii::$app->user->isGuest;
+                    },
+                ],
             ],
         ],
     ]); ?>

@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\Author;
 use backend\models\AuthorSearch;
+use backend\models\AuthorYearForm;
 use backend\models\Subscription;
 use Throwable;
 use Yii;
@@ -220,9 +221,10 @@ class AuthorController extends Controller
      */
     public function actionTopAuthors(?string $year = null): string
     {
-        $year = $year ?? date('Y');
+        $form = new AuthorYearForm();
+        $form->load(Yii::$app->request->get());
 
-        $query = Author::getTopAuthorsQuery($year);
+        $query = Author::getTopAuthorsQuery($form->year);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -235,7 +237,7 @@ class AuthorController extends Controller
             'top-authors',
             [
                 'dataProvider' => $dataProvider,
-                'year' => $year,
+                'form' => $form,
             ]
         );
     }

@@ -34,11 +34,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'year',
             'description:ntext',
             'isbn',
-            'file_id',
-            'created_by',
-            'created_at',
-            'updated_by',
-            'updated_at',
+            [
+                'attribute' => 'file_id',
+                'label' => 'Cover',
+                'format' => 'html',
+                'value' => function($model) {
+                    return $model->coverUrl ? Html::img($model->coverUrl, ['width' => '80']) : null;
+                }
+            ],
         ],
     ]) ?>
 

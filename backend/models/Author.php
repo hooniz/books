@@ -134,8 +134,6 @@ class Author extends ActiveRecord
      */
     public static function getTopAuthorsQuery(?string $year): ActiveQuery
     {
-        $year = $year ?? date('Y');
-
         $start = strtotime("{$year}-01-01 00:00:00");
         $end = strtotime("{$year}-12-31 23:59:59");
 
