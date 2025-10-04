@@ -18,7 +18,8 @@
         "yiisoft/yii2": "~2.0.53",
         "yiisoft/yii2-bootstrap5": "*",
         "yiisoft/yii2-symfonymailer": "~3.0.0",
-        "php-webdriver/webdriver": "*"
+        "php-webdriver/webdriver": "*",
+        "yiisoft/yii2-httpclient": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.27",

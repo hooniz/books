@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use backend\components\behaviors\UserEmployeeBehavior;
+use backend\services\SmsService;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\BlameableBehavior;
@@ -131,13 +132,28 @@ class Book extends ActiveRecord
     }
 
     /**
-     * @throws Exception
+     * Handles actions after saving a book record.
+     *
+     * @throws \yii\httpclient\Exception
      */
     public function afterSave($insert, $changedAttributes): void
     {
         parent::afterSave($insert, $changedAttributes);
 
+        $this->updateAuthors();
+
+        if ($insert) {
+            $this->notifySubscribers();
+        }
+    }
+
+    /**
+     * Updates the authors associated with the book.
+     */
+    protected function updateAuthors(): void
+    {
         LinkBookToAuthor::deleteAll(['book_id' => $this->id]);
+
         if (!empty($this->authorIds)) {
             foreach ($this->authorIds as $authorId) {
                 $ba = new LinkBookToAuthor();
@@ -147,6 +163,28 @@ class Book extends ActiveRecord
             }
         }
     }
+
+    /**
+     * Notifies subscribers of the authors about the new book via SMS.
+     *
+     * @throws \yii\httpclient\Exception
+     */
+    protected function notifySubscribers(): void
+    {
+        $smsService = new SmsService('EMULATOR');
+
+        foreach ($this->authors as $author) {
+            $subscriptions = $author->subscriptions;
+            foreach ($subscriptions as $subscription) {
+
+                if (! empty($user = $subscription->user)) {
+                    $message = "Новая книга автора {$author->getFullName()}: {$this->title}";
+                    $smsService->sendSms($user->phone, $message);
+                }
+            }
+        }
+    }
+
 
     /**
      * Deletes related records in the linking table after deleting a book.

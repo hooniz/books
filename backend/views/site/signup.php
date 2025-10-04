@@ -23,6 +23,8 @@ $this->title = 'Signup';
 
         <?= $form->field($model, 'email') ?>
 
+        <?= $form->field($model, 'phone') ?>
+
         <?= $form->field($model, 'password')->passwordInput() ?>
 
         <div class="form-group d-flex gap-2">
