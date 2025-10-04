@@ -177,8 +177,9 @@ class AuthorController extends Controller
 
         if (is_null($sub)) {
             $sub = new Subscription();
-            $sub->user_id = Yii::$app->user->id;
+            $sub->user_id = Yii::$app->user->id ?? -1;
             $sub->author_id = $id;
+
             $sub->save();
 
             Yii::$app->session->setFlash('success', 'Вы подписались на автора!');
