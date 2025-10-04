@@ -40,8 +40,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'description:ntext',
             'isbn',
             [
+                'label' => 'Authors',
+                'value' => static function (Book $model) {
+                    return implode(', ', array_map(
+                        static fn($author) => $author->getFullName(),
+                        $model->authors
+                    ));
+                },
+            ],
+            [
                 'class' => ActionColumn::class,
-                'urlCreator' => function ($action, Book $model, $key, $index, $column) {
+                'urlCreator' => static function ($action, Book $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                 },
                 'visibleButtons' => [

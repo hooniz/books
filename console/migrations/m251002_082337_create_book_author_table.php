@@ -24,8 +24,8 @@ class m251002_082337_create_book_author_table extends Migration
         $this->createTable(
             self::TABLE,
             [
-                'book_id' => $this->primaryKey(),
-                'author_id' => $this->string()->notNull(),
+                'book_id' => $this->integer()->notNull(),
+                'author_id' => $this->integer()->notNull(),
                 'created_by' => $this->integer()->notNull(),
                 'created_at' => $this->integer()->notNull(),
                 'updated_by' => $this->integer()->notNull(),
