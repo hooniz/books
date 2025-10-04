@@ -137,7 +137,6 @@ class Book extends ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
 
-        // обновляем авторов
         LinkBookToAuthor::deleteAll(['book_id' => $this->id]);
         if (!empty($this->authorIds)) {
             foreach ($this->authorIds as $authorId) {
