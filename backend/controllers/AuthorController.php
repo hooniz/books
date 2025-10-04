@@ -5,8 +5,11 @@ namespace backend\controllers;
 use backend\models\Author;
 use backend\models\AuthorSearch;
 use backend\models\Subscription;
+use Throwable;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\db\Exception;
+use yii\db\StaleObjectException;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -34,10 +37,10 @@ class AuthorController extends Controller
                 ],
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['create', 'update', 'delete', 'index', 'view', 'subscribe'],
+                    'only' => ['create', 'update', 'delete', 'index', 'view', 'subscribe', 'unsubscribe'],
                     'rules' => [
                         [
-                            'actions' => ['index', 'view', 'subscribe'],
+                            'actions' => ['index', 'view', 'subscribe', 'unsubscribe'],
                             'allow' => true,
                             'roles' => ['?', '@'],
                         ],
@@ -162,24 +165,19 @@ class AuthorController extends Controller
     /**
      * Subscribe the current user to the author with the given ID.
      *
+     * @param mixed $id
+     *
+     * @return Response
      * @throws Exception
      */
     public function actionSubscribe($id): Response
     {
-        if (Yii::$app->user->isGuest) {
-            return $this->redirect(['site/login']);
-        }
+        $sub = Subscription::getSubscriptionByAuthor($id);
 
-        $sub = Subscription::findOne([
-            'user_id' => Yii::$app->user->id,
-            'author_id' => $id
-        ]);
-
-        if (!$sub) {
+        if (is_null($sub)) {
             $sub = new Subscription();
             $sub->user_id = Yii::$app->user->id;
             $sub->author_id = $id;
-            $sub->created_at = time();
             $sub->save();
 
             Yii::$app->session->setFlash('success', 'Вы подписались на автора!');
@@ -188,5 +186,57 @@ class AuthorController extends Controller
         }
 
         return $this->redirect(['author/view', 'id' => $id]);
+    }
+
+    /**
+     * Unsubscribe the current user from the author with the given ID.
+     *
+     * @param mixed $id
+     *
+     * @return Response
+     * @throws Throwable
+     * @throws StaleObjectException
+     */
+    public function actionUnsubscribe($id): Response
+    {
+        $sub = Subscription::getSubscriptionByAuthor($id);
+
+        if (! is_null($sub)) {
+            $sub->delete();
+            Yii::$app->session->setFlash('success', 'Вы отписались от автора.');
+        } else {
+            Yii::$app->session->setFlash('info', 'Вы не подписаны на этого автора.');
+        }
+
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+    /**
+     * Displays top authors by number of books published in a given year.
+     *
+     * @param ?string $year
+     *
+     * @return string
+     */
+    public function actionTopAuthors(?string $year = null): string
+    {
+        $year = $year ?? date('Y');
+
+        $query = Author::getTopAuthorsQuery($year);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 25,
+            ]
+        ]);
+
+        return $this->render(
+            'top-authors',
+            [
+                'dataProvider' => $dataProvider,
+                'year' => $year,
+            ]
+        );
     }
 }

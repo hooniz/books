@@ -26,6 +26,8 @@ use yii\db\ActiveRecord;
  */
 class Author extends ActiveRecord
 {
+    public $book_count;
+
     /**
      * {@inheritdoc}
      */
@@ -121,5 +123,33 @@ class Author extends ActiveRecord
     public function getSubscribersCount(): bool|int|string|null
     {
         return $this->getSubscriptions()->count();
+    }
+
+    /**
+     * Returns a query to get the top authors by the number of books published in a given year.
+     *
+     * @param ?string $year
+     *
+     * @return ActiveQuery
+     */
+    public static function getTopAuthorsQuery(?string $year): ActiveQuery
+    {
+        $year = $year ?? date('Y');
+
+        $start = strtotime("{$year}-01-01 00:00:00");
+        $end = strtotime("{$year}-12-31 23:59:59");
+
+        return self::find()
+            ->alias('a')
+            ->select([
+                'a.*',
+                'CONCAT_WS(" ", a.last_name, a.first_name, a.middle_name) AS full_name',
+                'COUNT(b.id) AS book_count'
+            ])
+            ->innerJoin('link_book_to_author ba', 'ba.author_id = a.id')
+            ->innerJoin('book b', 'b.id = ba.book_id')
+            ->andWhere(['between', 'b.created_at', $start, $end])
+            ->groupBy(['a.id'])
+            ->orderBy(['book_count' => SORT_DESC]);
     }
 }

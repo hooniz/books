@@ -93,4 +93,19 @@ class Subscription extends ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
+    /**
+     * Get subscription by author for current user
+     *
+     * @param ?int $id
+     *
+     * @return self|null
+     */
+    public static function getSubscriptionByAuthor(?int $id): ?self
+    {
+        return self::findOne([
+            'user_id' => Yii::$app->user->id,
+            'author_id' => $id
+        ]);
+    }
 }

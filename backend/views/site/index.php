@@ -28,11 +28,11 @@ $this->title = 'Каталог книг';
                 <p><a class="btn btn-primary" href="<?= Url::to(['author/index']) ?>">Перейти &raquo;</a></p>
             </div>
 
-<!--            <div class="col-lg-3">-->
-<!--                <h2>Отчёты</h2>-->
-<!--                <p>ТОП 10 авторов по количеству книг за выбранный год.</p>-->
-<!--                <p><a class="btn btn-primary" href="--><?php //= \yii\helpers\Url::to(['author/top-authors']) ?><!--">Перейти &raquo;</a></p>-->
-<!--            </div>-->
+            <div class="col-lg-3">
+                <h2>Отчёты</h2>
+                <p>ТОП 10 авторов по количеству книг за выбранный год.</p>
+                <p><a class="btn btn-primary" href="<?= Url::to(['author/top-authors']) ?>">Перейти &raquo;</a></p>
+            </div>
 <!---->
 <!--            <div class="col-lg-3">-->
 <!--                <h2>Подписки</h2>-->

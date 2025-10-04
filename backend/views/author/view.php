@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Subscription;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -24,10 +25,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+
         <?php if (!Yii::$app->user->isGuest): ?>
-            <?= Html::a('Subscribe', ['subscribe', 'id' => $model->id], [
-                'class' => 'btn btn-primary'
-            ]) ?>
+            <?php if (Subscription::getSubscriptionByAuthor($model->id)): ?>
+                <?= Html::a('Unsubscribe', ['unsubscribe', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
+            <?php else: ?>
+                <?= Html::a('Subscribe', ['subscribe', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+            <?php endif; ?>
         <?php endif; ?>
     </p>
 
