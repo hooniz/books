@@ -225,7 +225,7 @@ class AuthorController extends Controller
         $form = new AuthorYearForm();
         $form->load(Yii::$app->request->get());
 
-        $query = Author::getTopAuthorsQuery($form->year);
+        $query = Author::getTopAuthorsQuery($form->getYear());
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

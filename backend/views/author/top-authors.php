@@ -20,9 +20,9 @@ $this->title = "TOP-10 authors";
 <?= $activeForm->field($form, 'year')
     ->textInput(
             [
-                    'type' => 'number',
+                'type' => 'number',
                 'style' => 'width:100px',
-                'value' => $form->year
+                'value' => $form->getYear()
             ]
     )->label('Year') ?>
 
