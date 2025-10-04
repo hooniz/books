@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\LinkBookToAuthor;
 use backend\models\LinkBookToAuthorSearch;
 use yii\db\Exception;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -27,6 +28,22 @@ class LinkBookToAuthorController extends Controller
                     'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['create', 'update', 'delete', 'index', 'view'],
+                    'rules' => [
+                        [
+                            'actions' => ['index', 'view', 'subscribe', 'unsubscribe'],
+                            'allow' => true,
+                            'roles' => ['?', '@'],
+                        ],
+                        [
+                            'actions' => ['create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
