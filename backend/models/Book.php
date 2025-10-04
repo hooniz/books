@@ -25,6 +25,9 @@ use yii\web\UploadedFile;
  * @property int $created_at
  * @property int $updated_by
  * @property int $updated_at
+ * @property-read ?File $file
+ * @property-read ActiveQuery $authors
+ * @property-read string|null $coverUrl
  */
 class Book extends ActiveRecord
 {
@@ -102,15 +105,16 @@ class Book extends ActiveRecord
     }
 
     /**
+     * Uploads file and creates File record
+     *
      * @throws Exception
      */
-    public function uploadFile()
+    public function uploadFile(): bool
     {
         if ($this->coverFile) {
             $filePath = 'uploads/' . uniqid('', true) . '.' . $this->coverFile->extension;
             if ($this->coverFile->saveAs($filePath)) {
 
-                // сохраняем файл в таблицу file
                 $file = new File([
                     'name' => $this->coverFile->name,
                     'path' => $filePath,
@@ -145,11 +149,21 @@ class Book extends ActiveRecord
         }
     }
 
+    /**
+     * Gets query for [[File]].
+     *
+     * @return ActiveQuery
+     */
     public function getFile(): ActiveQuery
     {
         return $this->hasOne(File::class, ['id' => 'file_id']);
     }
 
+    /**
+     * Returns the full URL of the book's cover image.
+     *
+     * @return string|null
+     */
     public function getCoverUrl(): ?string
     {
         return $this->file ? Yii::getAlias('@web/') . $this->file->path : null;
