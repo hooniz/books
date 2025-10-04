@@ -42,6 +42,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->coverUrl ? Html::img($model->coverUrl, ['width' => '80']) : null;
                 }
             ],
+            [
+                'label' => 'Authors',
+                'value' => static function ($model) {
+                    return implode(', ', array_map(
+                        static fn($author) => $author->getFullName(),
+                        $model->authors
+                    ));
+                },
+            ],
         ],
     ]) ?>
 
