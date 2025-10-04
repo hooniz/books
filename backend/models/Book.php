@@ -149,6 +149,19 @@ class Book extends ActiveRecord
     }
 
     /**
+     * Deletes related records in the linking table after deleting a book.
+     *
+     * @return void
+     *
+     */
+    public function afterDelete(): void
+    {
+        parent::afterDelete();
+
+        LinkBookToAuthor::deleteAll(['book_id' => $this->id]);
+    }
+
+    /**
      * Gets query for [[File]].
      *
      * @return ActiveQuery

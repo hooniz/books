@@ -34,7 +34,6 @@ class LinkBookToAuthor extends ActiveRecord
     {
         return [
             [['author_id'], 'required'],
-            [['created_by', ], 'integer'],
             [['author_id'], 'string', 'max' => 255],
         ];
     }

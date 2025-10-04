@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\Author;
 use backend\models\Book;
 use backend\models\BookSearch;
 use Yii;

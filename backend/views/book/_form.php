@@ -8,7 +8,8 @@ use backend\models\Author;
 ?>
 
 <?php $form = ActiveForm::begin([
-    'options' => ['enctype' => 'multipart/form-data']
+    'options' => ['enctype' => 'multipart/form-data'],
+    'method' => 'post',
 ]); ?>
 
 <?= $form->field($model, 'title')->textInput() ?>
@@ -23,7 +24,7 @@ use backend\models\Author;
     ['multiple' => true]
 ) ?>
 
-<div class="form-group">
+<div class="form-group mt-1">
     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
 </div>
 
