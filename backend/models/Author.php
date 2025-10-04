@@ -42,8 +42,7 @@ class Author extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['first_name', 'last_name', 'middle_name', 'created_by'], 'required'],
-            [['created_by'], 'integer'],
+            [['first_name', 'last_name', 'middle_name'], 'required'],
             [['first_name', 'last_name', 'middle_name'], 'string', 'max' => 50],
         ];
     }
@@ -82,6 +81,20 @@ class Author extends ActiveRecord
     }
 
     /**
+     * Deletes related records in the linking table after deleting a book.
+     *
+     * @return void
+     *
+     */
+    public function afterDelete(): void
+    {
+        parent::afterDelete();
+
+        LinkBookToAuthor::deleteAll(['author_id' => $this->id]);
+        Subscription::deleteAll(['author_id' => $this->id]);
+    }
+
+    /**
      * Gets query for [[Books]].
      *
      * @throws InvalidConfigException
@@ -89,7 +102,7 @@ class Author extends ActiveRecord
     public function getBooks(): ActiveQuery|null|Book
     {
         return $this->hasMany(Book::class, ['id' => 'book_id'])
-            ->viaTable('link_book_to_author', ['author_id' => 'id']);
+            ->viaTable('link_book_to_author', ['author_id' => 'id'])->limit(10);
     }
 
     /**

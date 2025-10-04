@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
 
                     return implode(
-                        '<br>',
+                        "," . '<br>',
                         array_map(
                             static function ($b) {
                                 return Html::encode($b->title);
